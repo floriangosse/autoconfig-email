@@ -1,0 +1,27 @@
+<clientConfig version="1.1">
+    <emailProvider id="{{ config.provider.domain }}">
+        <domain>{{ config.provider.domain }}</domain>
+        <displayName>{{ config.provider.name }}</displayName>
+        <displayShortName>{{ config.provider.shortName }}</displayShortName>
+
+        {% for imap in config.provider.imap %}
+            <incomingServer type="imap">
+                <hostname>{{ imap.host }}</hostname>
+                <port>{{ imap.port }}</port>
+                <socketType>{{ imap.sockeType }}</socketType>
+                <authentication>{{ imap.authentication }}</authentication>
+                <username>{{ emailaddress }}</username>
+            </incomingServer>
+        {% endfor %}
+
+        {% for smtp in config.provider.smtp %}
+            <outgoingServer type="smtp">
+                <hostname>{{ smtp.host }}</hostname>
+                <port>{{ smtp.port }}</port>
+                <socketType>{{ smtp.sockeType }}</socketType>
+                <authentication>{{ smtp.authentication }}</authentication>
+                <username>{{ emailaddress }}</username>
+            </outgoingServer>
+        {% endfor %}
+    </emailProvider>
+</clientConfig>

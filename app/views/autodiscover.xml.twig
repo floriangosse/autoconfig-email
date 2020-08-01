@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Autodiscover xmlns="https://schemas.microsoft.com/exchange/autodiscover/responseschema/2006">
+    <Response xmlns="https://schemas.microsoft.com/exchange/autodiscover/outlook/responseschema/2006a">
+        {% if email %}
+            <User>
+                <DisplayName>{{ email }}</DisplayName>
+            </User>
+        {% endif %}
+
+        <Account>
+            <AccountType>email</AccountType>
+            <Action>settings</Action>
+
+            {% for imap in config.provider.imap | slice(0, 1) %}
+                <Protocol>
+                    <Type>IMAP</Type>
+                    <TTL>1</TTL>
+
+                    <Server>{{ imap.host }}</Server>
+                    <Port>{{ imap.port }}</Port>
+
+                    {% if email %}
+                        <LoginName>{{ email }}</LoginName>
+                    {% endif %}
+
+                    <DomainRequired>off</DomainRequired>
+
+                    <SPA>off</SPA>
+                    <SSL>on</SSL>
+                    <AuthRequired>on</AuthRequired>
+                </Protocol>
+            {% endfor %}
+
+            {% for smtp in config.provider.smtp | slice(0, 1) %}
+                <Protocol>
+                    <Type>SMTP</Type>
+                    <TTL>1</TTL>
+
+                    <Server>{{ smtp.host}}</Server>
+                    <Port>{{ smtp.port }}</Port>
+
+                    {% if email %}
+                        <LoginName>{{ email }}</LoginName>
+                    {% endif %}
+
+                    <DomainRequired>off</DomainRequired>
+
+                    <SPA>off</SPA>
+                    <SSL>on</SSL>
+                    <AuthRequired>on</AuthRequired>
+                </Protocol>
+            {% endfor %}
+        </Account>
+    </Response>
+</Autodiscover>

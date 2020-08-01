@@ -1,0 +1,9 @@
+{
+    "name": "floriangosse/autoconfig-email",
+    "description": "Small service which provides most used auto-configuration files",
+    "type": "project",
+    "require": {
+        "mikecao/flight": "^1.3",
+        "twig/twig": "^3.0"
+    }
+}

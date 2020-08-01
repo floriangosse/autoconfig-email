@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>PayloadVersion</key>
+        <integer>1</integer>
+
+        <key>PayloadType</key>
+        <string>Configuration</string>
+
+        <key>PayloadUUID</key>
+        <string>{{ payload_uuid }}</string>
+
+        <key>PayloadIdentifier</key>
+        <string>{{ payload_identifier }}</string>
+
+        <key>PayloadDisplayName</key>
+        <string>{{ email }}</string>
+
+        <key>PayloadRemovalDisallowed</key>
+        <false/>
+
+        <key>PayloadContent</key>
+        <array>
+            <dict>
+                <key>PayloadVersion</key>
+                <real>1</real>
+
+                <key>PayloadType</key>
+                <string>com.apple.mail.managed</string>
+
+                <key>PayloadUUID</key>
+                <string>{{ payload_mail_uuid }}</string>
+
+                <key>PayloadIdentifier</key>
+                <string>{{ payload_mail_identifier }}</string>
+
+                <key>PayloadDisplayName</key>
+                <string>{{ email }}</string>
+
+
+                <key>EmailAccountDescription</key>
+                <string>{{ email }}</string>
+
+                <key>EmailAccountName</key>
+                <string>{{ email }}</string>
+
+                <key>EmailAccountType</key>
+                <string>EmailTypeIMAP</string>
+
+                <key>EmailAddress</key>
+                <string>{{ email }}</string>
+
+                {% for imap in config.provider.imap | slice(0, 1) %}
+                    <key>IncomingMailServerAuthentication</key>
+                    <string>EmailAuthPassword</string>
+
+                    <key>IncomingMailServerHostName</key>
+                    <string>{{ imap.host }}</string>
+
+                    <key>IncomingMailServerPortNumber</key>
+                    <integer>{{ imap.port }}</integer>
+
+                    <key>IncomingMailServerUseSSL</key>
+                    {% if imap.socketType == "SSL" %}
+                        <true/>
+                    {% else %}
+                        <false />
+                    {% endif %}
+
+                    <key>IncomingMailServerUsername</key>
+                    <string>{{ email }}</string>
+                {% endfor %}
+
+                {% for smtp in config.provider.smtp | slice(0, 1) %}
+                    <key>OutgoingMailServerAuthentication</key>
+                    <string>EmailAuthPassword</string>
+
+                    <key>OutgoingMailServerHostName</key>
+                    <string>{{ smtp.host }}</string>
+
+                    <key>OutgoingMailServerPortNumber</key>
+                    <integer>{{ smtp.port }}</integer>
+
+                    <key>OutgoingMailServerUseSSL</key>
+                    {% if smtp.socketType == "SSL" %}
+                        <true/>
+                    {% else %}
+                        <false />
+                    {% endif %}
+
+                    <key>OutgoingMailServerUsername</key>
+                    <string>{{ email }}</string>
+
+                    <key>OutgoingPasswordSameAsIncomingPassword</key>
+                    <true/>
+                {% endfor %}
+
+                <key>SMIMEEnablePerMessageSwitch</key>
+                <false/>
+
+                <key>SMIMEEnabled</key>
+                <false/>
+
+                <key>disableMailRecentsSyncing</key>
+                <false/>
+            </dict>
+        </array>
+    </dict>
+</plist>

@@ -1,0 +1,27 @@
+{
+    "domain": "my-business.com",
+
+    "provider": {
+        "domain": "my-provider.com",
+        "name": "myProvider Mail",
+        "shortName": "myProvider",
+
+        "imap": [
+            {
+                "host": "imap.my-provider.com",
+                "port": 993,
+                "socketType": "SSL",
+                "authentication": "password-cleartext"
+            }
+        ],
+
+        "smtp": [
+            {
+                "host": "smtp.my-provider.com",
+                "port": 465,
+                "socketType": "SSL",
+                "authentication": "password-cleartext"
+            }
+        ]
+    }
+}
