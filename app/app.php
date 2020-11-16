@@ -79,10 +79,42 @@ Flight::route('/autodiscover/autodiscover.xml', function() {
 });
 
 Flight::route('/email.mobileconfig', function() {
-    $email = Flight::request()->query['email'];
+    $request = Flight::request();
+    $email = $request->data['email'];
 
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        Flight::halt(400);
+    // Collect errors if it's a POST request
+    $errors = array();
+    if ($request->method == 'POST') {
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            array_push($errors, 'Invalid email address');
+        }
+    }
+
+    // Render the form if it's a GET request or a POST request with errors
+    if (
+        $request->method == 'GET' ||
+        ($request->method == 'POST' && count($errors) != 0)
+    ) {
+        // Incase of a valid email address in the query params we set this as the form value
+        if ($request->method == 'GET' && filter_var($request->query['email'], FILTER_VALIDATE_EMAIL)) {
+            $email = $request->query['email'];
+        }
+
+        $action = parse_url($request->url, PHP_URL_PATH);
+
+        Flight::render('mobileconfig.html', array(
+            'action' => $action,
+            'values' => array(
+                'email' => $email
+            ),
+            'errors' => $errors
+        ));
+
+
+        if (count($errors) > 0) {
+            Flight::response()->status(400);
+        }
+
         return;
     }
 
