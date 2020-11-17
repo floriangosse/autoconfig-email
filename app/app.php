@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 require_once(__DIR__ . '/view.php');
 
 $configfile_content = file_get_contents(__DIR__ . '/config/config.json');
@@ -79,13 +81,24 @@ Flight::route('/autodiscover/autodiscover.xml', function() {
 });
 
 Flight::route('/email.mobileconfig', function() {
+    $config = Flight::get('app.config');
+    $domain = $config['domain'];
+
     $request = Flight::request();
-    $email = $request->data['email'];
+    $response = Flight::response();
+    $local_part = $request->data['local_part'];
 
     // Collect errors if it's a POST request
     $errors = array();
     if ($request->method == 'POST') {
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $email = format_email(
+            array(
+                'local_part' => $local_part,
+                'domain' => $domain
+            )
+        );
+
+        if (empty($local_part) || !is_valid_email($email)) {
             array_push($errors, 'Invalid email address');
         }
     }
@@ -93,43 +106,64 @@ Flight::route('/email.mobileconfig', function() {
     // Render the form if it's a GET request or a POST request with errors
     if (
         $request->method == 'GET' ||
-        ($request->method == 'POST' && count($errors) != 0)
+        (
+            $request->method == 'POST' &&
+            count($errors) != 0
+        )
     ) {
-        // Incase of a valid email address in the query params we set this as the form value
-        if ($request->method == 'GET' && filter_var($request->query['email'], FILTER_VALIDATE_EMAIL)) {
-            $email = $request->query['email'];
+        $email_from_query = $request->query['email'];
+
+        // In case of a valid email address in the query params we set this as the form value
+        if (
+            $request->method == 'GET' &&
+            !empty($email_from_query) &&
+            is_valid_email($email_from_query)
+        ) {
+            $email_obj_from_query = parse_email($email_from_query);
+
+            if ($domain == $email_obj_from_query->domain) {
+                $local_part = $email_obj_from_query->local_part;
+            }
         }
 
         $action = parse_url($request->url, PHP_URL_PATH);
 
         Flight::render('mobileconfig.html', array(
+            'domain' => $domain,
             'action' => $action,
             'values' => array(
-                'email' => $email
+                'local_part' => $local_part
             ),
             'errors' => $errors
         ));
 
 
         if (count($errors) > 0) {
-            Flight::response()->status(400);
+            $response->status(400);
         }
 
         return;
     }
 
-    $config = Flight::get('app.config');
+    $sanitized_local_part = sanitize_local_part($local_part);
+
+    $email = format_email(
+        array(
+            'local_part' => $local_part,
+            'domain' => $domain
+        )
+    );
 
     $payload_uuid = md5($email);
-    $payload_identifier = implode('.', array_reverse(explode('.', "mobileconfig.{$config['domain']}")));
+    $payload_identifier = implode('.', array_reverse(explode('.', "mobileconfig.{$local_part}.{$domain}")));
 
     $payload_mail_uuid = md5("{$email}/mail");
     $payload_mail_identifier = "{$payload_identifier}.mail";
 
-    $filename = "{$config['domain']}.mobileconfig";
+    $filename = "{$sanitized_local_part}@{$domain}.mobileconfig";
 
-    Flight::response()->header('Content-Type', 'application/x-apple-aspen-config; charset=utf-8');
-    Flight::response()->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+    $response->header('Content-Type', 'application/x-apple-aspen-config; charset=utf-8');
+    $response->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     Flight::render('mobileconfig.xml', array(
         'payload_uuid' => $payload_uuid,
         'payload_identifier' => $payload_identifier,
@@ -138,5 +172,25 @@ Flight::route('/email.mobileconfig', function() {
         'email' => $email
     ));
 });
+
+function is_valid_email($email) {
+    return (bool) filter_var($email, FILTER_VALIDATE_EMAIL);
+}
+
+function parse_email($email) {
+    return (object) array(
+        'local_part' => substr($email, 0, strpos($email, '@')),
+        'domain' => substr($email, strpos($email, '@') + 1)
+    );
+}
+
+function format_email($obj) {
+    $obj = (object) $obj;
+    return "{$obj->local_part}@{$obj->domain}";
+}
+
+function sanitize_local_part($local_part) {
+    return str_replace(str_split("!#$%&'*+-/=?^_`{|}~"), "_", $local_part);
+}
 
 Flight::start();

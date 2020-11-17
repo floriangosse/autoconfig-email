@@ -80,7 +80,9 @@
             }
 
             input:focus {
-                outline-color: #9354a9;
+                outline: 0;
+                box-shadow: 0px 0px 0px 2px #9354a9;
+                background: #e8e8e8;
             }
 
             button {
@@ -120,6 +122,56 @@
                 color: #f5f5f5;
             }
 
+            .input-group {
+                display: flex;
+
+                margin-bottom: 0.75rem;
+
+                border-radius: var(--border-radius);
+            }
+
+            .input-group input {
+                margin-bottom: 0;
+                border-radius: 0;
+            }
+
+            .input-group > *:first-child {
+                border-top-left-radius: var(--border-radius);
+                border-bottom-left-radius: var(--border-radius);
+            }
+
+            .input-group > *:last-child {
+                border-top-right-radius: var(--border-radius);
+                border-bottom-right-radius: var(--border-radius);
+            }
+
+            .input-group-add-on {
+                padding: 0.5rem 0.75rem;
+
+                border: none;
+                background: #cdcdcd;
+
+                line-height: 20px;
+                font-size: 0.8125em;
+                font-weight: 300;
+            }
+
+            .input-group-add-on:not(:first-child) {
+                border-left: 1px solid #c0c0c0;
+            }
+
+            .input-group-add-on:not(:last-child) {
+                border-right: 1px solid #c0c0c0;
+            }
+
+            .input-group:focus-within {
+                box-shadow: 0px 0px 0px 2px #9354a9;
+            }
+
+            .input-group:focus-within input:focus {
+                box-shadow: 0;
+            }
+
             .form-actions {
                 display: flex;
                 flex-direction: row;
@@ -141,15 +193,20 @@
             {% endfor %}
 
             <div>
-                <label for="field-email">Email address</label>
-                <input
-                    type="text"
-                    name="email"
-                    value="{{ values['email'] }}"
-                    required
-                    placeholder="Enter email address ..."
-                    id="field-email"
-                />
+                <label for="field-local-part">Email address</label>
+                <div class="input-group">
+                    <input
+                        type="text"
+                        name="local_part"
+                        value="{{ values['local_part'] }}"
+                        required
+                        placeholder="e.g. firstname.lastname"
+                        id="field-local-part"
+                    />
+                    <div class="input-group-add-on">
+                        @{{ domain }}
+                    </div>
+                </div>
             </div>
 
             <div class="form-actions">
