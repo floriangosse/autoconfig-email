@@ -1,3 +1,4 @@
 .DS_Store
 vendor/
+release/
 app/config/config.json
