@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+use Ramsey\Uuid\Uuid;
 
 require_once(__DIR__ . '/view.php');
 
@@ -52,6 +52,7 @@ Flight::route('/autodiscover/autodiscover.xml', function() {
         if (
             empty($xml->Request->AcceptableResponseSchema)
             || (
+                // TODO: Replace with str_ends_with($xml->Request->AcceptableResponseSchema, '://schemas.microsoft.com/exchange/autodiscover/outlook/responseschema/2006a')
                 $xml->Request->AcceptableResponseSchema != 'http://schemas.microsoft.com/exchange/autodiscover/outlook/responseschema/2006a'
                 && $xml->Request->AcceptableResponseSchema != 'https://schemas.microsoft.com/exchange/autodiscover/outlook/responseschema/2006a'
             )
@@ -154,20 +155,24 @@ Flight::route('/email.mobileconfig', function() {
         )
     );
 
-    $payload_uuid = md5($email);
+    $uuid_namespace = Uuid::uuid5(Uuid::NAMESPACE_DNS, $domain);
+
+    $payload_uuid = Uuid::uuid5($uuid_namespace, $local_part);
     $payload_identifier = implode('.', array_reverse(explode('.', "mobileconfig.{$local_part}.{$domain}")));
 
-    $payload_mail_uuid = md5("{$email}/mail");
+    $payload_mail_uuid = Uuid::uuid5($uuid_namespace, "{$local_part}/mail");
     $payload_mail_identifier = "{$payload_identifier}.mail";
 
     $filename = "{$sanitized_local_part}@{$domain}.mobileconfig";
 
     $response->header('Content-Type', 'application/x-apple-aspen-config; charset=utf-8');
     $response->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+    // $response->header('Content-Type', 'application/xml; charset=utf-8');
+
     Flight::render('mobileconfig.xml', array(
-        'payload_uuid' => $payload_uuid,
+        'payload_uuid' => $payload_uuid->toString(),
         'payload_identifier' => $payload_identifier,
-        'payload_mail_uuid' => $payload_mail_uuid,
+        'payload_mail_uuid' => $payload_mail_uuid->toString(),
         'payload_mail_identifier' => $payload_mail_identifier,
         'email' => $email
     ));
