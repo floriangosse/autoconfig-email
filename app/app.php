@@ -88,6 +88,8 @@ Flight::route('/email.mobileconfig', function() {
     $request = Flight::request();
     $response = Flight::response();
     $local_part = $request->data['local_part'];
+    $incoming_mail_server_username_local_part = $request->data['incoming_mail_server_username_local_part'];
+    $outgoing_mail_server_username_local_part = $request->data['outgoing_mail_server_username_local_part'];
 
     // Collect errors if it's a POST request
     $errors = array();
@@ -102,6 +104,32 @@ Flight::route('/email.mobileconfig', function() {
         if (empty($local_part) || !is_valid_email($email)) {
             array_push($errors, 'Invalid email address');
         }
+
+        if (!empty($incoming_mail_server_username_local_part)) {
+            $incoming_mail_server_username = format_email(
+                array(
+                    'local_part' => $incoming_mail_server_username_local_part,
+                    'domain' => $domain
+                )
+            );
+
+            if (!is_valid_email($incoming_mail_server_username)) {
+                array_push($errors, 'Invalid incoming server username');
+            }
+        }
+
+        if (!empty($outgoing_mail_server_username_local_part)) {
+            $outgoing_mail_server_username = format_email(
+                array(
+                    'local_part' => $incoming_mail_server_username_local_part,
+                    'domain' => $domain
+                )
+            );
+
+            if (!is_valid_email($outgoing_mail_server_username)) {
+                array_push($errors, 'Invalid outgoing server username');
+            }
+        }
     }
 
     // Render the form if it's a GET request or a POST request with errors
@@ -112,6 +140,7 @@ Flight::route('/email.mobileconfig', function() {
             count($errors) != 0
         )
     ) {
+        $advanced = $request->query['advanced'] == '1';
         $email_from_query = $request->query['email'];
 
         // In case of a valid email address in the query params we set this as the form value
@@ -127,13 +156,21 @@ Flight::route('/email.mobileconfig', function() {
             }
         }
 
-        $action = parse_url($request->url, PHP_URL_PATH);
+        $action = parse_url($request->url, PHP_URL_PATH) . ($advanced ? '?advanced=1' : '');
+
+        $basic_options_url = '/email.mobileconfig';
+        $advanced_options_url = '/email.mobileconfig?advanced=1';
 
         Flight::render('mobileconfig.html', array(
+            'advanced' => $advanced,
+            'basic_options_url' => $basic_options_url,
+            'advanced_options_url' => $advanced_options_url,
             'domain' => $domain,
             'action' => $action,
             'values' => array(
-                'local_part' => $local_part
+                'local_part' => $local_part,
+                'incoming_mail_server_username_local_part' => $incoming_mail_server_username_local_part ?: '',
+                'outgoing_mail_server_username_local_part' => $outgoing_mail_server_username_local_part ?: ''
             ),
             'errors' => $errors
         ));
@@ -154,6 +191,31 @@ Flight::route('/email.mobileconfig', function() {
             'domain' => $domain
         )
     );
+    $incoming_mail_server_username = empty($incoming_mail_server_username_local_part)
+        ? $email
+        : format_email(
+            array(
+                'local_part' => $incoming_mail_server_username_local_part,
+                'domain' => $domain
+            )
+        );
+    $outgoing_mail_server_username = empty($outgoing_mail_server_username_local_part)
+        ? $email
+        : format_email(
+            array(
+                'local_part' => $outgoing_mail_server_username_local_part,
+                'domain' => $domain
+            )
+        );
+
+    var_dump(array(
+        'incoming_mail_server_username_local_part' => $incoming_mail_server_username_local_part,
+        'incoming_mail_server_username' => $incoming_mail_server_username,
+        'empty(incoming_mail_server_username_local_part)' => empty($incoming_mail_server_username_local_part),
+        'outgoing_mail_server_username_local_part' => $outgoing_mail_server_username_local_part,
+        'outgoing_mail_server_username' => $outgoing_mail_server_username,
+        'empty(outgoing_mail_server_username_local_part)' => empty($outgoing_mail_server_username_local_part)
+    ));
 
     $uuid_namespace = Uuid::uuid5(Uuid::NAMESPACE_DNS, $domain);
 
@@ -166,15 +228,18 @@ Flight::route('/email.mobileconfig', function() {
     $filename = "{$sanitized_local_part}@{$domain}.mobileconfig";
 
     $response->header('Content-Type', 'application/x-apple-aspen-config; charset=utf-8');
-    $response->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+    $response->header('Content-Type', 'text/plain; charset=utf-8');
     // $response->header('Content-Type', 'application/xml; charset=utf-8');
+    // $response->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
 
     Flight::render('mobileconfig.xml', array(
         'payload_uuid' => $payload_uuid->toString(),
         'payload_identifier' => $payload_identifier,
         'payload_mail_uuid' => $payload_mail_uuid->toString(),
         'payload_mail_identifier' => $payload_mail_identifier,
-        'email' => $email
+        'email' => $email,
+        'incoming_mail_server_username' => $incoming_mail_server_username,
+        'outgoing_mail_server_username' => $outgoing_mail_server_username
     ));
 });
 

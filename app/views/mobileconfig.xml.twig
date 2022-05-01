@@ -69,7 +69,7 @@
                     {% endif %}
 
                     <key>IncomingMailServerUsername</key>
-                    <string>{{ email }}</string>
+                    <string>{{ incoming_mail_server_username }}</string>
                 {% endfor %}
 
                 {% for smtp in config.provider.smtp | slice(0, 1) %}
@@ -90,7 +90,7 @@
                     {% endif %}
 
                     <key>OutgoingMailServerUsername</key>
-                    <string>{{ email }}</string>
+                    <string>{{ outgoing_mail_server_username }}</string>
 
                     <key>OutgoingPasswordSameAsIncomingPassword</key>
                     <true/>

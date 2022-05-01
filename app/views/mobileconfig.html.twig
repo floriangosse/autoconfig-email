@@ -46,7 +46,7 @@
             }
 
             label {
-                display: inline-block;
+                display: block;
 
                 margin-bottom: 0.25rem;
                 padding-left: 4px;
@@ -85,19 +85,26 @@
                 background: #e8e8e8;
             }
 
-            button {
+            button,
+            .button-link {
                 display: inline-block;
 
                 padding: 0.5rem 1rem;
 
-                border: none;
                 border-radius: var(--border-radius);
+
+                font-size: 0.875rem;
+                font-weight: 300;
+                line-height: 1.25rem;
+            }
+
+            button {
+                border: none;
 
                 background-color: #9354a9;
                 color: #f5f5f5;
 
-                line-height: 20px;
-                font-weight: 300;
+                cursor: pointer;
             }
 
             button:hover,
@@ -108,6 +115,43 @@
             button:focus {
                 background-color: #9864a9;
                 outline: none;
+            }
+
+            .button-link {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+
+                color: #734285;
+
+                text-decoration: none;
+            }
+
+            .button-link:hover,
+            .button-link:focus {
+                color: #734285;
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+
+            .button-link:focus {
+                outline: 0;
+                box-shadow: 0px 0px 0px 2px #9354a9;
+            }
+
+            details summary:first-of-type {
+                padding-left: 4px;
+
+                font-size: 0.8125em;
+                color: #3c3c3c;
+            }
+
+            details[open] > summary:first-of-type {
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            label.required:after {
+                content: ' *';
             }
 
             .error {
@@ -172,10 +216,26 @@
                 box-shadow: 0;
             }
 
+            .help-text {
+                margin-top: 0.25rem;
+                margin-bottom: 0.25rem;
+                padding-left: 4px;
+
+                font-size: 0.625em;
+                font-style: italic;
+                color: #6f6f6f;
+            }
+
+            input + .help-text,
+            .input-group + .help-text {
+                margin-top: -0.625rem;
+                margin-bottom: 0.75rem;
+            }
+
             .form-actions {
                 display: flex;
-                flex-direction: row;
-                justify-content: flex-end;
+                flex-direction: row-reverse;
+                justify-content: space-between;
 
                 margin-top: 1.5em;
                 padding-top: 0.75em;
@@ -193,7 +253,7 @@
             {% endfor %}
 
             <div>
-                <label for="field-local-part">Email address</label>
+                <label for="field-local-part" class="required">Email address</label>
                 <div class="input-group">
                     <input
                         type="text"
@@ -209,8 +269,54 @@
                 </div>
             </div>
 
+            {% if advanced %}
+                <div>
+                    <label for="field-incoming-server-username-local-part">Incoming server user</label>
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            name="incoming_mail_server_username_local_part"
+                            value="{{ values['incoming_mail_server_username_local_part'] }}"
+                            placeholder="e.g. firstname.lastname"
+                            id="field-incoming-server-username-local-part"
+                        />
+                        <div class="input-group-add-on">
+                            @{{ domain }}
+                        </div>
+                    </div>
+                    <p class="help-text">
+                        Incoming server address: {{ config.provider.imap | column('host') | first }}
+                    </p>
+                </div>
+
+                <div>
+                    <label for="field-outgoing-server-username-local-part">Outgoing server user</label>
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            name="outgoing_mail_server_username_local_part"
+                            value="{{ values['outgoing_mail_server_username_local_part'] }}"
+                            placeholder="e.g. firstname.lastname"
+                            id="field-outgoing-server-username-local-part"
+                        />
+                        <div class="input-group-add-on">
+                            @{{ domain }}
+                        </div>
+                    </div>
+                    <p class="help-text">
+                        Outgoing server address: {{ config.provider.smtp | column('host') | first }}
+                    </p>
+                </div>
+            {% endif %}
+
+
             <div class="form-actions">
                 <button type="submit">Generate</button>
+                {% if advanced %}
+                    <a href="{{ basic_options_url }}" class="button-link">Basic options</a>
+                {% else %}
+                    <a href="{{ advanced_options_url }}" class="button-link">Advanded options</a>
+                {% endif %}
             </div>
         </form>
     </body>
