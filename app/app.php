@@ -208,15 +208,6 @@ Flight::route('/email.mobileconfig', function() {
             )
         );
 
-    var_dump(array(
-        'incoming_mail_server_username_local_part' => $incoming_mail_server_username_local_part,
-        'incoming_mail_server_username' => $incoming_mail_server_username,
-        'empty(incoming_mail_server_username_local_part)' => empty($incoming_mail_server_username_local_part),
-        'outgoing_mail_server_username_local_part' => $outgoing_mail_server_username_local_part,
-        'outgoing_mail_server_username' => $outgoing_mail_server_username,
-        'empty(outgoing_mail_server_username_local_part)' => empty($outgoing_mail_server_username_local_part)
-    ));
-
     $uuid_namespace = Uuid::uuid5(Uuid::NAMESPACE_DNS, $domain);
 
     $payload_uuid = Uuid::uuid5($uuid_namespace, $local_part);
@@ -228,9 +219,9 @@ Flight::route('/email.mobileconfig', function() {
     $filename = "{$sanitized_local_part}@{$domain}.mobileconfig";
 
     $response->header('Content-Type', 'application/x-apple-aspen-config; charset=utf-8');
-    $response->header('Content-Type', 'text/plain; charset=utf-8');
+    // $response->header('Content-Type', 'text/plain; charset=utf-8');
     // $response->header('Content-Type', 'application/xml; charset=utf-8');
-    // $response->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
+    $response->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
 
     Flight::render('mobileconfig.xml', array(
         'payload_uuid' => $payload_uuid->toString(),
