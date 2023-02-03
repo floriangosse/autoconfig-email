@@ -17,6 +17,7 @@ tar --create \
     --gzip \
     --file "${FILENAME}" \
     --exclude app/config/config.json \
+        .htaccess \
         index.php \
         vendor \
         app
