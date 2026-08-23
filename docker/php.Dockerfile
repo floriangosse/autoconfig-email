@@ -1,8 +1,9 @@
-FROM php:7-fpm-buster
+FROM php:8.4-fpm-trixie
 
 # Install common tools
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
+    apt-get upgrade --yes && \
+    apt-get install --no-install-recommends --yes \
         zip \
         unzip \
         && \
