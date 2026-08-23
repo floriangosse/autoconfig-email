@@ -20,6 +20,18 @@ Flight::register('view', 'TwigView', array(
 
 Flight::view()->set('config', Flight::get('app.config'));
 
+// Log unhandled errors instead of exposing stack traces (which include server
+// file paths) in the response, overriding Flight's default error handler.
+Flight::map('error', function ($e) {
+    error_log($e->getMessage() . "\n" . $e->getTraceAsString());
+
+    Flight::response()
+        ->clear()
+        ->status(500)
+        ->write('Internal Server Error')
+        ->send();
+});
+
 // Routes
 Flight::route('/', function() {
     Flight::render('index.html', array(
