@@ -2,3 +2,4 @@
 vendor/
 release/
 app/config/config.json
+.env
