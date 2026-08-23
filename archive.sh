@@ -20,4 +20,5 @@ tar --create \
         .htaccess \
         index.php \
         vendor \
-        app
+        app \
+        assets
