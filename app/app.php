@@ -21,6 +21,25 @@ Flight::register('view', 'TwigView', array(
 Flight::view()->set('config', Flight::get('app.config'));
 
 // Routes
+Flight::route('/', function() {
+    Flight::render('index.html', array(
+        'routes' => array(
+            array(
+                'path' => '/email.mobileconfig',
+                'description' => 'Generate an Apple .mobileconfig mail profile'
+            ),
+            array(
+                'path' => '/mail/config-v1.1.xml',
+                'description' => 'Thunderbird / Mozilla autoconfig discovery'
+            ),
+            array(
+                'path' => '/autodiscover/autodiscover.xml',
+                'description' => 'Microsoft Outlook Autodiscover'
+            )
+        )
+    ));
+});
+
 Flight::route('/mail/config-v1.1.xml', function() {
     $email = Flight::request()->query['emailaddress'];
 
