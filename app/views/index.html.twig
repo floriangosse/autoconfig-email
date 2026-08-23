@@ -4,15 +4,15 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Autoconfig Email</title>
-        <link rel="stylesheet" href="/assets/index.css">
+        <link rel="stylesheet" href="/assets/style.css">
     </head>
     <body>
-        <main>
+        <main class="card">
             <h1>Autoconfig Email</h1>
             <ul>
                 {% for route in routes %}
                     <li>
-                        <a href="{{ route.path }}">{{ route.path }}</a>
+                        <a href="{{ route.path }}" class="route-link">{{ route.path }}</a>
                         <span class="help-text">{{ route.description }}</span>
                     </li>
                 {% endfor %}

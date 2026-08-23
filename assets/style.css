@@ -1,0 +1,277 @@
+:root {
+    --border-radius: 4px;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 1em;
+
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+
+    padding-bottom: 0.125em;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    font-size: 2em;
+}
+
+.card {
+    max-width: 28rem;
+    margin: 3rem auto 0;
+    padding: 0.75rem 0.75rem 0.75rem;
+
+    background: #fbfbfb;
+
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+}
+
+.help-text {
+    display: block;
+
+    margin-top: 0.25rem;
+
+    font-size: 0.8125em;
+    font-style: italic;
+    color: #6f6f6f;
+}
+
+/* Index page */
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    padding: 0.75rem 0.25rem;
+}
+
+li:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.route-link {
+    color: #734285;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.route-link:hover,
+.route-link:focus {
+    text-decoration: underline;
+}
+
+/* Profile generator page */
+
+label {
+    display: block;
+
+    margin-bottom: 0.25rem;
+    padding-left: 4px;
+
+    font-size: 0.8125em;
+    color: #3c3c3c;
+}
+
+input {
+    /* Total height of 36px = (vert padding * 2) + line height */
+
+    display: block;
+
+    width: 100%;
+
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 0;
+
+    border: none;
+    border-radius: var(--border-radius);
+    background: #e3e3e3;
+
+    line-height: 20px;
+    text-indent: 0.5rem;
+    font-size: 0.8125em;
+    font-weight: 300;
+}
+
+input:hover {
+    background: #e7e7e7;
+}
+
+input:focus {
+    outline: 0;
+    box-shadow: 0px 0px 0px 2px #9354a9;
+    background: #e8e8e8;
+}
+
+button,
+.button-link {
+    display: inline-block;
+
+    padding: 0.5rem 1rem;
+
+    border-radius: var(--border-radius);
+
+    font-size: 0.875rem;
+    font-weight: 300;
+    line-height: 1.25rem;
+}
+
+button {
+    border: none;
+
+    background-color: #9354a9;
+    color: #f5f5f5;
+
+    cursor: pointer;
+}
+
+button:hover,
+button:focus {
+    background-color: #b97ecc;
+}
+
+button:focus {
+    background-color: #9864a9;
+    outline: none;
+}
+
+.button-link {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+
+    color: #734285;
+
+    text-decoration: none;
+}
+
+.button-link:hover,
+.button-link:focus {
+    color: #734285;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.button-link:focus {
+    outline: 0;
+    box-shadow: 0px 0px 0px 2px #9354a9;
+}
+
+details summary:first-of-type {
+    padding-left: 4px;
+
+    font-size: 0.8125em;
+    color: #3c3c3c;
+}
+
+details[open] > summary:first-of-type {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+label.required:after {
+    content: ' *';
+}
+
+.error {
+    padding: 0.75em 0.5rem;
+    margin-bottom: 0.5rem;
+
+    background-color: #d64d68;
+    border-radius: var(--border-radius);
+
+    font-size: 0.8125em;
+
+    color: #f5f5f5;
+}
+
+.input-group {
+    display: flex;
+
+    margin-bottom: 0.75rem;
+
+    border-radius: var(--border-radius);
+}
+
+.input-group input {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.input-group > *:first-child {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+}
+
+.input-group > *:last-child {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.input-group-add-on {
+    flex-shrink: 0;
+
+    padding: 0.5rem 0.75rem;
+
+    border: none;
+    background: #cdcdcd;
+
+    line-height: 20px;
+    font-size: 0.8125em;
+    font-weight: 300;
+}
+
+.input-group-add-on:not(:first-child) {
+    border-left: 1px solid #c0c0c0;
+}
+
+.input-group-add-on:not(:last-child) {
+    border-right: 1px solid #c0c0c0;
+}
+
+.input-group:focus-within {
+    box-shadow: 0px 0px 0px 2px #9354a9;
+}
+
+.input-group:focus-within input:focus {
+    box-shadow: 0;
+}
+
+.field-help {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    padding-left: 4px;
+
+    font-size: 0.625em;
+    font-style: italic;
+    color: #6f6f6f;
+}
+
+input + .field-help,
+.input-group + .field-help {
+    margin-top: -0.625rem;
+    margin-bottom: 0.75rem;
+}
+
+.form-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+
+    margin-top: 1.5em;
+    padding-top: 0.75em;
+
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
